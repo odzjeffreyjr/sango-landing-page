@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./App.css";
 import {
   HiOfficeBuilding,
@@ -12,11 +12,28 @@ function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Google Form link for investment inquiries
+  const formLink = "https://docs.google.com/forms/d/e/1FAIpQLSf4WE4I3uSkxLO8qaedP5ZgcpN5JBTVKe8bhqWiLx2I1KWnmA/viewform?usp=dialog";
+
   useEffect(() => {
-    // Scroll effect for navbar
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    // Throttle function to limit scroll event frequency
+    const throttle = (func, limit) => {
+      let inThrottle;
+      return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      };
     };
+
+    // Scroll effect for navbar
+    const handleScroll = throttle(() => {
+      setScrolled(window.scrollY > 50);
+    }, 100);
 
     // Intersection Observer for scroll animations
     const observerOptions = {
@@ -38,8 +55,8 @@ function App() {
       observer.observe(section);
     });
 
-    // Enhanced scroll-based animations
-    const handleScrollAnimation = () => {
+    // Optimized scroll-based animations with throttling
+    const handleScrollAnimation = throttle(() => {
       const scrollTop = window.scrollY;
       const elements = document.querySelectorAll(
         ".hero-title, .stat-card, .aerial-view",
@@ -50,10 +67,10 @@ function App() {
         const yPos = -((scrollTop * speed) / 100);
         element.style.transform = `translateY(${yPos}px)`;
       });
-    };
+    }, 50);
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("scroll", handleScrollAnimation);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScrollAnimation, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -62,32 +79,23 @@ function App() {
     };
   }, []);
 
-  const handleCTAClick = (e) => {
-    // Prevent any default behavior
-    e.preventDefault();
-
-    // Add visual feedback
-    const button = e.target;
+  const handleCTAClick = useCallback((e) => {
+    // Add visual feedback without preventing default form behavior
+    const button = e.currentTarget;
     button.style.transform = "scale(0.95)";
-
-    // Create mailto URL
-    const mailtoUrl =
-      "mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards,";
-
+    
     setTimeout(() => {
       button.style.transform = "";
-      // Open email client
-      window.location.href = mailtoUrl;
     }, 150);
-  };
+  }, []);
 
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen(!mobileMenuOpen);
-  };
+  }, [mobileMenuOpen]);
 
-  const closeMobileMenu = () => {
+  const closeMobileMenu = useCallback(() => {
     setMobileMenuOpen(false);
-  };
+  }, []);
 
   return (
     <div className="App">
@@ -201,6 +209,8 @@ function App() {
                   src="/aerial.jpg"
                   alt="Aerial view of African forest"
                   className="aerial-image"
+                  loading="eager"
+                  decoding="async"
                 />
                 <div className="live-indicator">
                   <div className="live-dot"></div>
@@ -212,11 +222,15 @@ function App() {
                   src="/frame 1.jpg"
                   alt="Ground view 1"
                   className="ground-image"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   src="/frame 2.jpg"
                   alt="Ground view 2"
                   className="ground-image"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -305,6 +319,8 @@ function App() {
                   src="/Yaseen.JPG"
                   alt="Yaseen - CEO"
                   className="founder-photo"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <h3 className="founder-name">Yaseen</h3>
@@ -324,6 +340,8 @@ function App() {
                   src="/My Preferred Headshot Jeffrey Oduman.png"
                   alt="Jeffrey - CTO"
                   className="founder-photo"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <h3 className="founder-name">Jeffrey</h3>
@@ -342,6 +360,8 @@ function App() {
                   src="/Alex.jpeg"
                   alt="Alex - COO"
                   className="founder-photo"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <h3 className="founder-name">Alex</h3>
@@ -422,15 +442,15 @@ function App() {
             </p>
             <div className="monitoring-grid">
               <div className="monitor-feed">
-                <img src="/frame 1.jpg" alt="Forest monitoring view 1" />
+                <img src="/frame 1.jpg" alt="Forest monitoring view 1" loading="lazy" decoding="async" />
                 <span className="feed-label">Canopy Health Analysis</span>
               </div>
               <div className="monitor-feed">
-                <img src="/frame 2.jpg" alt="Forest monitoring view 2" />
+                <img src="/frame 2.jpg" alt="Forest monitoring view 2" loading="lazy" decoding="async" />
                 <span className="feed-label">Growth Progress Tracking</span>
               </div>
               <div className="monitor-feed">
-                <img src="/aerial.jpg" alt="Aerial monitoring" />
+                <img src="/aerial.jpg" alt="Aerial monitoring" loading="lazy" decoding="async" />
                 <span className="feed-label">Multi-Platform Verification</span>
               </div>
             </div>
@@ -560,7 +580,7 @@ function App() {
                 platform
               </p>
               <a
-                href="mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards,"
+                href={formLink}
                 className="cta-button"
                 style={{
                   textDecoration: "none",
@@ -568,6 +588,9 @@ function App() {
                   textAlign: "center",
                 }}
                 onClick={handleCTAClick}
+                aria-label="Schedule a discussion"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Schedule Discussion
               </a>
@@ -585,6 +608,8 @@ function App() {
                 src="/Name Original.png"
                 alt="Sango"
                 className="footer-logo-image"
+                loading="lazy"
+                decoding="async"
               />
               <p className="footer-tagline">
                 Tokenized African forests for carbon & yield
@@ -615,13 +640,17 @@ function App() {
 
       {/* Floating Contact Button */}
       <a
-        href="mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards,"
+        href={formLink}
         className="floating-contact-btn"
         style={{
           textDecoration: "none",
           display: "flex",
           alignItems: "center",
         }}
+        onClick={handleCTAClick}
+        aria-label="Contact Sango"
+        rel="noopener noreferrer"
+        target="_blank"
       >
         <span className="btn-text">Contact</span>
         <span className="btn-icon">
