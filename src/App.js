@@ -1,10 +1,90 @@
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { HiOfficeBuilding, HiCreditCard, HiChartBar, HiChatAlt2 } from 'react-icons/hi';
+import { GiPlantSeed } from 'react-icons/gi';
 
 function App() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    // Scroll effect for navbar
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationDelay = `${Math.random() * 0.5}s`;
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    document.querySelectorAll('.section').forEach(section => {
+      observer.observe(section);
+    });
+
+    // Enhanced scroll-based animations
+    const handleScrollAnimation = () => {
+      const scrollTop = window.scrollY;
+      const elements = document.querySelectorAll('.hero-title, .stat-card, .aerial-view');
+      
+      elements.forEach((element, index) => {
+        const speed = (index + 1) * 0.5;
+        const yPos = -(scrollTop * speed / 100);
+        element.style.transform = `translateY(${yPos}px)`;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScrollAnimation);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScrollAnimation);
+      observer.disconnect();
+    };
+  }, []);
+
+  const handleCTAClick = (e) => {
+    // Prevent any default behavior
+    e.preventDefault();
+    
+    // Add visual feedback
+    const button = e.target;
+    button.style.transform = 'scale(0.95)';
+    
+    // Create mailto URL
+    const mailtoUrl = 'mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards,';
+    
+    setTimeout(() => {
+      button.style.transform = '';
+      // Open email client
+      window.location.href = mailtoUrl;
+    }, 150);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <div className="App">
       {/* Navigation */}
-      <nav className="navbar">
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="nav-container">
           <div className="nav-logo">
             <img 
@@ -19,6 +99,19 @@ function App() {
             <a href="#product" className="nav-link">Product</a>
             <a href="#contact" className="nav-link">Contact</a>
           </div>
+          <div className={`mobile-menu-toggle ${mobileMenuOpen ? 'active' : ''}`} onClick={toggleMobileMenu}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <div className={`mobile-menu ${mobileMenuOpen ? 'active' : ''}`}>
+          <div className="mobile-nav-links">
+            <a href="#about" className="mobile-nav-link" onClick={closeMobileMenu}>About</a>
+            <a href="#founders" className="mobile-nav-link" onClick={closeMobileMenu}>Team</a>
+            <a href="#product" className="mobile-nav-link" onClick={closeMobileMenu}>Product</a>
+            <a href="#contact" className="mobile-nav-link" onClick={closeMobileMenu}>Contact</a>
+          </div>
         </div>
       </nav>
 
@@ -26,14 +119,16 @@ function App() {
       <section className="hero">
         <div className="hero-content">
           <div className="hero-text">
-            <h1 className="hero-title">Tokenized African Forests for Carbon & Yield</h1>
+            <h1 className="hero-title">Invest in Real Trees, Earn Real Returns</h1>
             <p className="hero-subtitle">
-              Invest in African forests with transparent & green returns
+              The first platform to tokenize African forests with verified impact and financial yields
             </p>
             <p className="hero-description">
-              Sango turns African forests into yield-bearing digital assets. Invest in "Tree Tokens" 
-              backed by real, geo-tagged trees monitored via satellite, AI vision, and on-ground audits. 
-              Fund reforestation, track impact in real time, and receive payouts from timber and verified carbon credits.
+              Invest in African forests through digital tree tokens backed by real, GPS-tracked assets. 
+              Our platform combines satellite monitoring, drone footage, live sensors, and real-time telemetry 
+              with AI verification to provide complete transparency. Generate returns through dual revenue streams: 
+              certified carbon credits and sustainable timber harvesting. Government partnerships and regulated 
+              banking infrastructure ensure secure, compliant transactions from investment to implementation.
             </p>
             <div className="hero-stats">
               <div className="stat-card">
@@ -46,7 +141,7 @@ function App() {
               </div>
               <div className="stat-card">
                 <h3 className="stat-number">$160M+</h3>
-                <p className="stat-label">Market Opportunity</p>
+                <p className="stat-label">Annual Market Size</p>
               </div>
             </div>
           </div>
@@ -84,30 +179,30 @@ function App() {
       <section id="about" className="section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">The Opportunity</h2>
-            <p className="section-subtitle">Africa's forests are undervalued assets in the global carbon market</p>
+            <h2 className="section-title">Why African Forests Are the Next Big Investment</h2>
+            <p className="section-subtitle">A $160M+ market with massive untapped potential and institutional backing</p>
           </div>
           <div className="opportunity-grid">
             <div className="opportunity-card problem-card">
               <div className="card-header">
-                <h3 className="card-title">The Problem</h3>
+                <h3 className="card-title">Market Challenges</h3>
               </div>
               <ul className="feature-list">
-                <li className="feature-item">Less than 5% of global carbon funding reaches Sub-Saharan Africa</li>
-                <li className="feature-item">Fragmented regulation and limited transparency</li>
-                <li className="feature-item">Slow fund movement and poor verification infrastructure</li>
-                <li className="feature-item">Investors lack measurable climate impact with financial returns</li>
+                <li className="feature-item">Sub-Saharan Africa receives less than 5% of global climate funding despite containing 60% of suitable reforestation land</li>
+                <li className="feature-item">$160M+ annual market growing 15-20% yearly, yet institutional access remains limited</li>
+                <li className="feature-item">Existing platforms lack verification standards and comprehensive real-time monitoring capabilities</li>
+                <li className="feature-item">Limited opportunities for verified climate investments with measurable financial returns</li>
               </ul>
             </div>
             <div className="opportunity-card solution-card">
               <div className="card-header">
-                <h3 className="card-title">Our Solution</h3>
+                <h3 className="card-title">Sango's Platform</h3>
               </div>
               <ul className="feature-list">
-                <li className="feature-item">Tokenized trees as verifiable digital assets</li>
-                <li className="feature-item">Real-time monitoring via satellite, AI, and ground audits</li>
-                <li className="feature-item">Direct connection between global capital and land stewards</li>
-                <li className="feature-item">Transparent yields from both timber and carbon credits</li>
+                <li className="feature-item">Tokenized forest assets with comprehensive GPS mapping, satellite verification, drone surveillance, and live sensor networks</li>
+                <li className="feature-item">Strategic partnerships with government entities and regulated financial institutions</li>
+                <li className="feature-item">Diversified revenue model combining carbon credit certification and timber harvesting</li>
+                <li className="feature-item">Streamlined investment process with complete audit trail and regulatory compliance</li>
               </ul>
             </div>
           </div>
@@ -118,8 +213,8 @@ function App() {
       <section id="founders" className="section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Meet the Founders</h2>
-            <p className="section-subtitle">A team combining sustainability expertise, financial architecture, and technical depth</p>
+            <h2 className="section-title">The Team Making It Happen</h2>
+            <p className="section-subtitle">Proven expertise in sustainability, technology, and African markets</p>
           </div>
           <div className="founders-grid">
             <div className="founder-card">
@@ -131,12 +226,12 @@ function App() {
                 />
               </div>
               <h3 className="founder-name">Yaseen</h3>
-              <h4 className="founder-title">CEO & Co-Founder (50%)</h4>
+              <h4 className="founder-title">CEO & Co-Founder</h4>
               <p className="founder-bio">
-                Led supply chain and sustainability projects at Kearney. Secured formal partnerships 
-                with the Forestry Commission of Zimbabwe and MetBank. Expertise in procurement, 
-                logistics, and climate strategy with proven track record of delivering measurable 
-                cost and efficiency gains for multinational clients.
+                Led supply chain and sustainability projects at Kearney, delivering measurable cost and 
+                efficiency gains for multinational clients. Secured formal partnerships with the 
+                Forestry Commission of Zimbabwe and MetBank. Expert in procurement, logistics, 
+                and climate strategy with proven track record in African markets.
               </p>
             </div>
             <div className="founder-card">
@@ -148,12 +243,12 @@ function App() {
                 />
               </div>
               <h3 className="founder-name">Jeffrey</h3>
-              <h4 className="founder-title">CTO & Co-Founder (25%)</h4>
+              <h4 className="founder-title">CTO & Co-Founder</h4>
               <p className="founder-bio">
                 Full-stack developer with expertise in robotics and computer vision. Builds all 
-                production code using Python (FastAPI), JavaScript/React, AWS, and C++. Handles 
-                data ingestion pipelines, AI model deployment, and scalable web systems for 
-                Sango's MRV layer.
+                production code and handles data ingestion pipelines, AI model deployment, and 
+                scalable web systems. Responsible for Sango's core MRV (monitoring, reporting, 
+                verification) infrastructure.
               </p>
             </div>
             <div className="founder-card">
@@ -165,24 +260,25 @@ function App() {
                 />
               </div>
               <h3 className="founder-name">Alex</h3>
-              <h4 className="founder-title">COO & Co-Founder (25%)</h4>
+              <h4 className="founder-title">COO & Co-Founder</h4>
               <p className="founder-bio">
-                Financial services and operations expert. Designed compliant fund-flow frameworks 
-                and digital banking operations. Handles operations, regulatory compliance, and 
-                financial modeling. Transitioning from Amazon to join full-time by early 2026.
+                Financial services and operations expert with experience designing compliant fund-flow 
+                frameworks and digital banking operations. Handles regulatory compliance, financial 
+                modeling, and cross-border payment systems. Transitioning from Amazon to join full-time 
+                by early 2026.
               </p>
             </div>
           </div>
           <div className="founder-story">
             <div className="story-card">
-              <h3 className="story-title">How We Met</h3>
+              <h3 className="story-title">Our Partnership</h3>
               <p className="story-text">
                 Yaseen and Alex met in 2024 while working at Kearney on supply chain and sustainability 
-                projects. They stayed in touch after leaving consulting. Alex, Yaseen and Jeffrey were 
-                introduced through mutual connections and worked well together on a case competition at 
-                Columbia University. The team has been working on Sango since October 2024, with Yaseen 
-                and Jeffrey full-time while pursuing their master's degrees, and Alex contributing 
-                part-time during his transition from Amazon.
+                projects. Alex, Yaseen and Jeffrey were introduced through mutual connections and 
+                collaborated successfully on a case competition at Columbia University. The team has been 
+                working on Sango since October 2024, with Yaseen and Jeffrey full-time while pursuing 
+                their master's degrees, and Alex contributing part-time during his transition from Amazon. 
+                Together, they bring complementary expertise in African markets, technology, and financial operations.
               </p>
             </div>
           </div>
@@ -193,51 +289,41 @@ function App() {
       <section id="product" className="section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">How Sango Works</h2>
-            <p className="section-subtitle">From payment to planting within days</p>
+            <h2 className="section-title">Your Money at Work</h2>
+            <p className="section-subtitle">From investment to impact in days, not years</p>
           </div>
           <div className="product-flow">
             <div className="flow-step">
               <div className="step-number">1</div>
-              <h3 className="step-title">Invest</h3>
-              <p className="step-description">Purchase Tree Tokens representing real, geo-tagged trees in African forests</p>
+              <h3 className="step-title">Acquire Tree Tokens</h3>
+              <p className="step-description">Purchase digital tokens representing verified, geo-located trees in managed African forests</p>
             </div>
             <div className="flow-step">
               <div className="step-number">2</div>
-              <h3 className="step-title">Monitor</h3>
-              <p className="step-description">Track your trees in real-time via satellite imagery, AI analysis, and ground audits</p>
+              <h3 className="step-title">Monitor Progress</h3>
+              <p className="step-description">Access real-time data on forest health, growth metrics, and carbon sequestration via integrated monitoring systems including GPS tracking, satellite imagery, drone surveillance, and live sensor networks</p>
             </div>
             <div className="flow-step">
               <div className="step-number">3</div>
-              <h3 className="step-title">Earn</h3>
-              <p className="step-description">Receive returns from timber yields and verified carbon credits</p>
+              <h3 className="step-title">Generate Returns</h3>
+              <p className="step-description">Receive distributions from verified carbon credit sales and sustainable timber harvesting operations</p>
             </div>
           </div>
-          <div className="tech-showcase">
-            <h3 className="tech-title">Technology Stack</h3>
-            <div className="tech-grid">
-              <div className="tech-item">Python & FastAPI</div>
-              <div className="tech-item">React & TypeScript</div>
-              <div className="tech-item">AWS & PostgreSQL</div>
-              <div className="tech-item">YOLOv8 & SAM</div>
-              <div className="tech-item">Google Earth Engine</div>
-              <div className="tech-item">Blockchain Integration</div>
-            </div>
-            <div className="monitoring-preview">
-              <h4 className="preview-title">Real-time Forest Monitoring</h4>
-              <div className="monitoring-grid">
-                <div className="monitor-feed">
-                  <img src="/frame 1.jpg" alt="Forest monitoring view 1" />
-                  <span className="feed-label">Canopy Analysis</span>
-                </div>
-                <div className="monitor-feed">
-                  <img src="/frame 2.jpg" alt="Forest monitoring view 2" />
-                  <span className="feed-label">Growth Tracking</span>
-                </div>
-                <div className="monitor-feed">
-                  <img src="/aerial.jpg" alt="Aerial monitoring" />
-                  <span className="feed-label">Satellite View</span>
-                </div>
+          <div className="monitoring-preview">
+            <h3 className="preview-title">Comprehensive Monitoring & Verification</h3>
+            <p className="monitoring-subtitle">Advanced satellite imaging, drone footage, live sensors, GPS tracking, and real-time telemetry with AI analysis ensure complete transparency and accountability</p>
+            <div className="monitoring-grid">
+              <div className="monitor-feed">
+                <img src="/frame 1.jpg" alt="Forest monitoring view 1" />
+                <span className="feed-label">Canopy Health Analysis</span>
+              </div>
+              <div className="monitor-feed">
+                <img src="/frame 2.jpg" alt="Forest monitoring view 2" />
+                <span className="feed-label">Growth Progress Tracking</span>
+              </div>
+              <div className="monitor-feed">
+                <img src="/aerial.jpg" alt="Aerial monitoring" />
+                <span className="feed-label">Multi-Platform Verification</span>
               </div>
             </div>
           </div>
@@ -248,37 +334,45 @@ function App() {
       <section className="section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Proven Traction</h2>
-            <p className="section-subtitle">Building with institutional support and strategic partnerships</p>
+            <h2 className="section-title">Built to Scale</h2>
+            <p className="section-subtitle">Government partnerships, banking infrastructure, and operational readiness from day one</p>
           </div>
           <div className="traction-grid">
             <div className="traction-card">
               <div className="traction-icon">
-                <div className="icon-circle">G</div>
+                <div className="icon-circle">
+                  <HiOfficeBuilding />
+                </div>
               </div>
               <h3 className="traction-title">Government Partnership</h3>
-              <p className="traction-description">Formal letter of support from the Forestry Commission of Zimbabwe, providing direct access to state-affiliated land portfolios and permits</p>
+              <p className="traction-description">Formal letter of support from the Forestry Commission of Zimbabwe provides direct access to state-affiliated land portfolios, permits, and national reforestation programs, significantly de-risking operations and regulatory compliance.</p>
             </div>
             <div className="traction-card">
               <div className="traction-icon">
-                <div className="icon-circle">B</div>
+                <div className="icon-circle">
+                  <HiCreditCard />
+                </div>
               </div>
-              <h3 className="traction-title">Banking Infrastructure</h3>
-              <p className="traction-description">MetBank committed to provide compliant rails for collections, escrow, and milestone-based disbursements with full AML screening</p>
+              <h3 className="traction-title">Regulated Banking Infrastructure</h3>
+              <p className="traction-description">MetBank partnership delivers compliant financial rails for investor collections, escrow services, and milestone-based disbursements with full AML screening and sanctions compliance, ensuring transparent cross-border fund flows.</p>
             </div>
             <div className="traction-card">
               <div className="traction-icon">
-                <div className="icon-circle">O</div>
+                <div className="icon-circle">
+                  <GiPlantSeed />
+                </div>
               </div>
-              <h3 className="traction-title">Operational Readiness</h3>
-              <p className="traction-description">Secured partnerships with local nurseries and landholders, built MRV architecture foundation</p>
+              <h3 className="traction-title">Operational Foundation</h3>
+              <p className="traction-description">Established partnerships with local nurseries, landholders, and ground operations teams. Comprehensive MRV (monitoring, reporting, verification) architecture built and tested with GPS tracking, satellite imagery, drone surveillance, and live sensor networks, with 500 verified hectares ready for pilot deployment.</p>
             </div>
             <div className="traction-card">
               <div className="traction-icon">
-                <div className="icon-circle">M</div>
+                <div className="icon-circle">
+                  <HiChartBar />
+                </div>
               </div>
-              <h3 className="traction-title">Market Validation</h3>
-              <p className="traction-description">Africa's voluntary carbon and timber sectors valued at $160M+ annually, growing 15-20% per year</p>
+              <h3 className="traction-title">Market Momentum</h3>
+              <p className="traction-description">African voluntary carbon and timber sectors valued at $160M+ annually with 15-20% yearly growth. Growing institutional demand for verified climate assets with measurable impact and financial returns.</p>
             </div>
           </div>
         </div>
@@ -288,8 +382,8 @@ function App() {
       <section id="contact" className="section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Get In Touch</h2>
-            <p className="section-subtitle">Ready to invest in the future of African forests?</p>
+            <h2 className="section-title">Investment Partnership</h2>
+            <p className="section-subtitle">Join institutional investors in advancing sustainable forestry through verified digital assets</p>
           </div>
           <div className="contact-content">
             <div className="contact-info">
@@ -305,15 +399,25 @@ function App() {
                   <span className="detail-value">Pre-seed</span>
                 </div>
                 <div className="detail-item">
+                  <span className="detail-label">Use of Funds:</span>
+                  <span className="detail-value">Product development, MRV infrastructure, pilot operations</span>
+                </div>
+                <div className="detail-item">
                   <span className="detail-label">Location:</span>
-                  <span className="detail-value">New York (post-YC) / Southern Africa Operations</span>
+                  <span className="detail-value">New York HQ / Southern Africa Operations</span>
                 </div>
               </div>
             </div>
             <div className="cta">
-              <h3 className="cta-title">Join Our Mission</h3>
-              <p className="cta-subtitle">Help us connect global capital to African reforestation</p>
-              <button className="cta-button">Contact Us</button>
+              <h3 className="cta-title">Strategic Partnership</h3>
+              <p className="cta-subtitle">Partner with Africa's leading verified forestry investment platform</p>
+              <a 
+                href="mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards," 
+                className="cta-button"
+                style={{textDecoration: 'none', display: 'inline-block', textAlign: 'center'}}
+              >
+                Schedule Discussion
+              </a>
             </div>
           </div>
         </div>
@@ -343,6 +447,16 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Contact Button */}
+      <a 
+        href="mailto:yoa2104@columbia.edu?subject=Investment Partnership Inquiry - Sango&body=Dear Yaseen,%0A%0AI am interested in discussing a potential investment partnership with Sango. I would like to learn more about your verified forestry platform and investment opportunities.%0A%0APlease let me know your availability for a discussion.%0A%0ABest regards," 
+        className="floating-contact-btn"
+        style={{textDecoration: 'none', display: 'flex', alignItems: 'center'}}
+      >
+        <span className="btn-text">Contact</span>
+        <span className="btn-icon"><HiChatAlt2 /></span>
+      </a>
     </div>
   );
 }
