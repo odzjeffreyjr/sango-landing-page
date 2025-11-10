@@ -193,7 +193,7 @@ function App() {
                 <p className="stat-label">Verified Hectares</p>
               </div>
               <div className="stat-card">
-                <h3 className="stat-number">Q2 2026</h3>
+                <h3 className="stat-number">Q4 2025</h3>
                 <p className="stat-label">MVP Launch</p>
               </div>
               <div className="stat-card">
@@ -568,7 +568,7 @@ function App() {
                 <div className="detail-item">
                   <span className="detail-label">Location:</span>
                   <span className="detail-value">
-                    New York HQ / Southern Africa Operations
+                    San Francisco HQ / Southern Africa Operations
                   </span>
                 </div>
               </div>
