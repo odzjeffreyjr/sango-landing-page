@@ -1291,7 +1291,6 @@ img {
   font-weight: 700;
   line-height: 1.2;
   position: relative;
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 
 .section-title::after {
